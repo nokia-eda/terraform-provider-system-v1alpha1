@@ -126,7 +126,7 @@ func MonitorStateListDataSourceSchema(ctx context.Context) schema.Schema {
 													Description:         "Enable or disable disk monitoring.",
 													MarkdownDescription: "Enable or disable disk monitoring.",
 												},
-												"utilization_1": schema.SingleNestedAttribute{
+												"utilization": schema.SingleNestedAttribute{
 													Attributes: map[string]schema.Attribute{
 														"critical_threshold": schema.Int64Attribute{
 															Optional:            true,
@@ -175,7 +175,7 @@ func MonitorStateListDataSourceSchema(ctx context.Context) schema.Schema {
 													Description:         "Enable or disable memory monitoring.",
 													MarkdownDescription: "Enable or disable memory monitoring.",
 												},
-												"utilization_2": schema.SingleNestedAttribute{
+												"utilization": schema.SingleNestedAttribute{
 													Attributes: map[string]schema.Attribute{
 														"critical_threshold": schema.Int64Attribute{
 															Optional:            true,
@@ -287,7 +287,7 @@ func MonitorStateListDataSourceSchema(ctx context.Context) schema.Schema {
 			"kind": schema.StringAttribute{
 				Computed: true,
 			},
-			"labelselector": schema.StringAttribute{
+			"label_selector": schema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
 				Description:         "a label selector string to filter the results based on CR labels",
@@ -308,7 +308,7 @@ type MonitorStateListModel struct {
 	Filter        types.String `tfsdk:"filter"`
 	Items         types.List   `tfsdk:"items"`
 	Kind          types.String `tfsdk:"kind"`
-	Labelselector types.String `tfsdk:"labelselector"`
+	LabelSelector types.String `tfsdk:"label_selector"`
 	Namespace     types.String `tfsdk:"namespace"`
 }
 
@@ -3643,7 +3643,7 @@ func (t DiskType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue)
 			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
 	}
 
-	utilization1Attribute, ok := attributes["utilization_1"]
+	utilization1Attribute, ok := attributes["utilization"]
 
 	if !ok {
 		diags.AddError(
@@ -3753,7 +3753,7 @@ func NewDiskValue(attributeTypes map[string]attr.Type, attributes map[string]att
 			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
 	}
 
-	utilization1Attribute, ok := attributes["utilization_1"]
+	utilization1Attribute, ok := attributes["utilization"]
 
 	if !ok {
 		diags.AddError(
@@ -3851,7 +3851,7 @@ var _ basetypes.ObjectValuable = DiskValue{}
 
 type DiskValue struct {
 	Enabled      basetypes.BoolValue   `tfsdk:"enabled"`
-	Utilization1 basetypes.ObjectValue `tfsdk:"utilization_1"`
+	Utilization1 basetypes.ObjectValue `tfsdk:"utilization"`
 	state        attr.ValueState
 }
 
@@ -3862,7 +3862,7 @@ func (v DiskValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 	var err error
 
 	attrTypes["enabled"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["utilization_1"] = basetypes.ObjectType{
+	attrTypes["utilization"] = basetypes.ObjectType{
 		AttrTypes: Utilization1Value{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
 
@@ -3886,7 +3886,7 @@ func (v DiskValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) 
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
 
-		vals["utilization_1"] = val
+		vals["utilization"] = val
 
 		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
@@ -3940,7 +3940,7 @@ func (v DiskValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 
 	attributeTypes := map[string]attr.Type{
 		"enabled": basetypes.BoolType{},
-		"utilization_1": basetypes.ObjectType{
+		"utilization": basetypes.ObjectType{
 			AttrTypes: Utilization1Value{}.AttributeTypes(ctx),
 		},
 	}
@@ -3956,8 +3956,8 @@ func (v DiskValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, di
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"enabled":       v.Enabled,
-			"utilization_1": utilization1,
+			"enabled":     v.Enabled,
+			"utilization": utilization1,
 		})
 
 	return objVal, diags
@@ -4000,7 +4000,7 @@ func (v DiskValue) Type(ctx context.Context) attr.Type {
 func (v DiskValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
 		"enabled": basetypes.BoolType{},
-		"utilization_1": basetypes.ObjectType{
+		"utilization": basetypes.ObjectType{
 			AttrTypes: Utilization1Value{}.AttributeTypes(ctx),
 		},
 	}
@@ -4538,7 +4538,7 @@ func (t MemoryType) ValueFromObject(ctx context.Context, in basetypes.ObjectValu
 			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
 	}
 
-	utilization2Attribute, ok := attributes["utilization_2"]
+	utilization2Attribute, ok := attributes["utilization"]
 
 	if !ok {
 		diags.AddError(
@@ -4648,7 +4648,7 @@ func NewMemoryValue(attributeTypes map[string]attr.Type, attributes map[string]a
 			fmt.Sprintf(`enabled expected to be basetypes.BoolValue, was: %T`, enabledAttribute))
 	}
 
-	utilization2Attribute, ok := attributes["utilization_2"]
+	utilization2Attribute, ok := attributes["utilization"]
 
 	if !ok {
 		diags.AddError(
@@ -4746,7 +4746,7 @@ var _ basetypes.ObjectValuable = MemoryValue{}
 
 type MemoryValue struct {
 	Enabled      basetypes.BoolValue   `tfsdk:"enabled"`
-	Utilization2 basetypes.ObjectValue `tfsdk:"utilization_2"`
+	Utilization2 basetypes.ObjectValue `tfsdk:"utilization"`
 	state        attr.ValueState
 }
 
@@ -4757,7 +4757,7 @@ func (v MemoryValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error
 	var err error
 
 	attrTypes["enabled"] = basetypes.BoolType{}.TerraformType(ctx)
-	attrTypes["utilization_2"] = basetypes.ObjectType{
+	attrTypes["utilization"] = basetypes.ObjectType{
 		AttrTypes: Utilization2Value{}.AttributeTypes(ctx),
 	}.TerraformType(ctx)
 
@@ -4781,7 +4781,7 @@ func (v MemoryValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
 		}
 
-		vals["utilization_2"] = val
+		vals["utilization"] = val
 
 		if err := tftypes.ValidateValue(objectType, vals); err != nil {
 			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
@@ -4835,7 +4835,7 @@ func (v MemoryValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, 
 
 	attributeTypes := map[string]attr.Type{
 		"enabled": basetypes.BoolType{},
-		"utilization_2": basetypes.ObjectType{
+		"utilization": basetypes.ObjectType{
 			AttrTypes: Utilization2Value{}.AttributeTypes(ctx),
 		},
 	}
@@ -4851,8 +4851,8 @@ func (v MemoryValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, 
 	objVal, diags := types.ObjectValue(
 		attributeTypes,
 		map[string]attr.Value{
-			"enabled":       v.Enabled,
-			"utilization_2": utilization2,
+			"enabled":     v.Enabled,
+			"utilization": utilization2,
 		})
 
 	return objVal, diags
@@ -4895,7 +4895,7 @@ func (v MemoryValue) Type(ctx context.Context) attr.Type {
 func (v MemoryValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
 	return map[string]attr.Type{
 		"enabled": basetypes.BoolType{},
-		"utilization_2": basetypes.ObjectType{
+		"utilization": basetypes.ObjectType{
 			AttrTypes: Utilization2Value{}.AttributeTypes(ctx),
 		},
 	}

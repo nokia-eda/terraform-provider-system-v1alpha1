@@ -82,10 +82,10 @@ This value must be greater than the minorThreshold.
 Optional:
 
 - `enabled` (Boolean) Enable or disable disk monitoring.
-- `utilization_1` (Attributes) Parameters relating to disk utilization monitoring. (see [below for nested schema](#nestedatt--spec--monitor_spec--disk--utilization_1))
+- `utilization` (Attributes) Parameters relating to disk utilization monitoring. (see [below for nested schema](#nestedatt--spec--monitor_spec--disk--utilization))
 
-<a id="nestedatt--spec--monitor_spec--disk--utilization_1"></a>
-### Nested Schema for `spec.monitor_spec.disk.utilization_1`
+<a id="nestedatt--spec--monitor_spec--disk--utilization"></a>
+### Nested Schema for `spec.monitor_spec.disk.utilization`
 
 Optional:
 
@@ -105,10 +105,10 @@ This value must be greater than the minorThreshold.
 Optional:
 
 - `enabled` (Boolean) Enable or disable memory monitoring.
-- `utilization_2` (Attributes) Parameters relating to memory utilization monitoring. (see [below for nested schema](#nestedatt--spec--monitor_spec--memory--utilization_2))
+- `utilization` (Attributes) Parameters relating to memory utilization monitoring. (see [below for nested schema](#nestedatt--spec--monitor_spec--memory--utilization))
 
-<a id="nestedatt--spec--monitor_spec--memory--utilization_2"></a>
-### Nested Schema for `spec.monitor_spec.memory.utilization_2`
+<a id="nestedatt--spec--monitor_spec--memory--utilization"></a>
+### Nested Schema for `spec.monitor_spec.memory.utilization`
 
 Optional:
 
